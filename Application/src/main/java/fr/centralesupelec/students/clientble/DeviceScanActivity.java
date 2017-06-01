@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.example.android.bluetoothlegatt;
+package fr.centralesupelec.students.clientble;
 
 import android.Manifest;
 import android.app.Activity;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  Copyright 2013 The Android Open Source Project
+ Copyright 2017 Louis-Guillaume Dubois
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,10 +16,8 @@
  limitations under the License.
 -->
 
-
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.bluetoothlegatt"
+    package="fr.centralesupelec.students.clientble"
     android:versionCode="1"
     android:versionName="1.0">
 
