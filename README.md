@@ -1,6 +1,9 @@
 
-Android BluetoothLeGatt Sample
-===================================
+Android BluetoothLeGatt Sample - Modified
+=========================================
+
+**Code from [https://github.com/googlesamples/android-BluetoothLeGatt](https://github.com/googlesamples/android-BluetoothLeGatt)
+modified by Louis-Guillaume Dubois.**
 
 This sample demonstrates how to use the Bluetooth LE Generic Attribute Profile (GATT)
 to transmit arbitrary data between devices.
@@ -54,6 +57,8 @@ License
 -------
 
 Copyright 2016 The Android Open Source Project, Inc.
+
+Copyright 2017 Louis-Guillaume Dubois
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor
 license agreements.  See the NOTICE file distributed with this work for
