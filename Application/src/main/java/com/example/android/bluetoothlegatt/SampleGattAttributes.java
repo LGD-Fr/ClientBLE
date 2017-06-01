@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2017 Louis-Guillaume Dubois
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +24,26 @@ import java.util.HashMap;
  */
 public class SampleGattAttributes {
     private static HashMap<String, String> attributes = new HashMap();
-    public static String HEART_RATE_MEASUREMENT = "00002a37-0000-1000-8000-00805f9b34fb";
-    public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 
     static {
         // Sample Services.
-        attributes.put("0000180d-0000-1000-8000-00805f9b34fb", "Heart Rate Service");
-        attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information Service");
+        attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information");
+        attributes.put("00001801-0000-1000-8000-00805f9b34fb", "Generic Attribute");
+        attributes.put("00001800-0000-1000-8000-00805f9b34fb", "Generic Access");
+        attributes.put("0000180f-0000-1000-8000-00805f9b34fb", "Battery Service");
+
+        attributes.put("11223344-5566-7788-9900-aabbccddeeff", "Private Service");
+
+
         // Sample Characteristics.
-        attributes.put(HEART_RATE_MEASUREMENT, "Heart Rate Measurement");
-        attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name String");
+        attributes.put("00002a19-0000-1000-8000-00805f9b34fb", "Battery Level");
+        attributes.put("00002a00-0000-1000-8000-00805f9b34fb", "Device Name");
+        attributes.put("00002a01-0000-1000-8000-00805f9b34fb", "Appearance");
+        attributes.put("00002a04-0000-1000-8000-00805f9b34fb", "Peripheral Preferred Connection Parameters");
+        attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name");
+
+        attributes.put("01020304-0506-0708-0900-0a0b0c0d0e0f", "5-byte r char.");
+        attributes.put("ff020304-0506-0708-0900-0a0b0c0d0e0f", "3-byte rw notif. char.");
     }
 
     public static String lookup(String uuid, String defaultName) {
