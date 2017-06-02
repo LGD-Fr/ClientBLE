@@ -33,7 +33,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -127,35 +130,16 @@ public class BluetoothLeService extends Service {
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
         Log.d(TAG, "broadcastUpdate(String, BluetoothGattChar.) appelé.");
-        /* TODO
-        // This is special handling for the Heart Rate Measurement profile.  Data parsing is
-        // carried out as per profile specifications:
-        // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
-            int flag = characteristic.getProperties();
-            int format = -1;
-            if ((flag & 0x01) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT16;
-                Log.d(TAG, "Heart rate format UINT16.");
-            } else {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8;
-                Log.d(TAG, "Heart rate format UINT8.");
-            }
-            final int heartRate = characteristic.getIntValue(format, 1);
-            Log.d(TAG, String.format("Received heart rate: %d", heartRate));
-            intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
-        } else {
-        */
-        // For all other profiles, writes the data formatted in HEX.
         final byte[] data = characteristic.getValue();
         if (data != null && data.length > 0) {
             if (SampleGattAttributes.SENSOR_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
-                long value =
+                final long value =
                         (data.length == 2) ? (data[0] << 8) & 0x0000ff00 | (data[1] << 0) & 0x000000ff
                                           : (data[0] << 0) & 0x000000ff;
-                long max = 65535; // 2^16 - 1
-                double percent = ((double) (100 * value)) / ((double) max);
-                intent.putExtra(EXTRA_DATA, String.format("%.3f %%", percent));
+                final long max = 65535; // 2^16 - 1
+                final double percent = ((double) (100 * value)) / ((double) max);
+                final String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG).format(new Date());
+                intent.putExtra(EXTRA_DATA, String.format("%.3f %%\n(%s)", percent, date));
             } else {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 //stringBuilder.append(String.format("%d", data));/
@@ -166,9 +150,6 @@ public class BluetoothLeService extends Service {
                 intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
             }
         }
-        /* TODO
-        }
-        */
         sendBroadcast(intent);
     }
 

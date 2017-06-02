@@ -54,7 +54,7 @@ public class SampleGattAttributes {
         attributes.put("00002a04-0000-1000-8000-00805f9b34fb", "Peripheral Preferred Connection Parameters");
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name");
 
-        attributes.put(SENSOR_CHARACTERISTIC_UUID_STRING, "5-byte r notif. sensor value");
+        attributes.put(SENSOR_CHARACTERISTIC_UUID_STRING, "Sensor value");
         attributes.put("ff020304-0506-0708-0900-0a0b0c0d0e0f", "3-byte rw notif. char.");
     }
 
