@@ -18,12 +18,21 @@
 package fr.centralesupelec.students.clientble;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * This class includes a small subset of standard GATT attributes for demonstration purposes.
  */
 public class SampleGattAttributes {
     private static HashMap<String, String> attributes = new HashMap();
+    public static final String PRIVATE_SERVICE_UUID_STRING =
+            "11223344-5566-7788-9900-aabbccddeeff";
+    public static final UUID PRIVATE_SERVICE_UUID =
+            UUID.fromString(PRIVATE_SERVICE_UUID_STRING);
+    public static final String SENSOR_CHARACTERISTIC_UUID_STRING =
+            "01020304-0506-0708-0900-0a0b0c0d0e0f";
+    public static final UUID SENSOR_CHARACTERISTIC_UUID =
+            UUID.fromString(SENSOR_CHARACTERISTIC_UUID_STRING);
 
     static {
         // Sample Services.
@@ -32,8 +41,7 @@ public class SampleGattAttributes {
         attributes.put("00001800-0000-1000-8000-00805f9b34fb", "Generic Access");
         attributes.put("0000180f-0000-1000-8000-00805f9b34fb", "Battery Service");
 
-        attributes.put("11223344-5566-7788-9900-aabbccddeeff", "Private Service");
-
+        attributes.put(PRIVATE_SERVICE_UUID_STRING, "Private Service");
 
         // Sample Characteristics.
         attributes.put("00002a19-0000-1000-8000-00805f9b34fb", "Battery Level");
@@ -42,7 +50,7 @@ public class SampleGattAttributes {
         attributes.put("00002a04-0000-1000-8000-00805f9b34fb", "Peripheral Preferred Connection Parameters");
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name");
 
-        attributes.put("01020304-0506-0708-0900-0a0b0c0d0e0f", "5-byte r char.");
+        attributes.put(SENSOR_CHARACTERISTIC_UUID_STRING, "5-byte r notif. sensor value");
         attributes.put("ff020304-0506-0708-0900-0a0b0c0d0e0f", "3-byte rw notif. char.");
     }
 
