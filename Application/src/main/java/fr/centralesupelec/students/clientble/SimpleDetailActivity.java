@@ -144,6 +144,7 @@ public class SimpleDetailActivity extends Activity {
         mBluetoothLeService = null;
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.gatt_services, menu);
@@ -156,22 +157,26 @@ public class SimpleDetailActivity extends Activity {
         }
         return true;
     }
+    */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            /*
             case R.id.menu_connect:
                 mBluetoothLeService.connect(mDeviceAddress);
                 return true;
             case R.id.menu_disconnect:
                 mBluetoothLeService.disconnect();
                 return true;
+            */
             case android.R.id.home:
                 onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void updateConnectionState(final int resourceId) {
         runOnUiThread(new Runnable() {

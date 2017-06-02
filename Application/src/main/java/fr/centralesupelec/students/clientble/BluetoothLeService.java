@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
@@ -318,7 +320,12 @@ public class BluetoothLeService extends Service {
                     enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                             : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
             );
-            while (!mBluetoothGatt.writeDescriptor(descriptor)) ;
+            try {
+                while (!mBluetoothGatt.writeDescriptor(descriptor))
+                    sleep(500);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
     }
