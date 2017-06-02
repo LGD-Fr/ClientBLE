@@ -147,9 +147,10 @@ public class BluetoothLeService extends Service {
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
             if (data != null && data.length > 0) {
-                if (SampleGattAttributes.SENSOR_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
+                if (SampleGattAttributes.SENSOR_CHARACTERISTIC_UUID.equals(characteristic.getUuid())
+                && data.length >= 1) {
                     int value = (data[0]<<8)&0x0000ff00 | (data[1]<<0)&0x000000ff;
-                    intent.putExtra(EXTRA_DATA, String.format("%d", value));
+                    intent.putExtra(EXTRA_DATA, String.format("décimal: %d", value));
                 } else {
                     final StringBuilder stringBuilder = new StringBuilder(data.length);
                     //stringBuilder.append(String.format("%d", data));/
