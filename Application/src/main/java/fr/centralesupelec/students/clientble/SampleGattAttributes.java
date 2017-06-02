@@ -33,6 +33,10 @@ public class SampleGattAttributes {
             "01020304-0506-0708-0900-0a0b0c0d0e0f";
     public static final UUID SENSOR_CHARACTERISTIC_UUID =
             UUID.fromString(SENSOR_CHARACTERISTIC_UUID_STRING);
+    public static final String CHARACTERISTIC_CONFIG_UUID_STRING =
+            "00002902-0000-1000-8000-00805f9b34fb";
+    public static final UUID CHARACTERISTIC_CONFIG_UUID =
+            UUID.fromString(CHARACTERISTIC_CONFIG_UUID_STRING);
 
     static {
         // Sample Services.

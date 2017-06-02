@@ -1,7 +1,9 @@
 package fr.centralesupelec.students.clientble;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -15,6 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.util.UUID;
 
 public class SimpleDetailActivity extends Activity {
     private final static String TAG = SimpleDetailActivity.class.getSimpleName();
@@ -122,12 +126,14 @@ public class SimpleDetailActivity extends Activity {
         if (mBluetoothLeService != null) {
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
+            mBluetoothLeService.setCharacteristicNotification(mSensorValueCharac, true);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mBluetoothLeService.setCharacteristicNotification(mSensorValueCharac, false);
         unregisterReceiver(mGattUpdateReceiver);
     }
 
