@@ -36,6 +36,7 @@ import android.util.Log;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static java.lang.Thread.sleep;
 
@@ -62,8 +63,10 @@ public class BluetoothLeService extends Service {
             "fr.centralesupelec.students.clientble.ACTION_GATT_DISCONNECTED";
     public final static String ACTION_GATT_SERVICES_DISCOVERED =
             "fr.centralesupelec.students.clientble.ACTION_GATT_SERVICES_DISCOVERED";
-    public final static String ACTION_DATA_AVAILABLE =
-            "fr.centralesupelec.students.clientble.ACTION_DATA_AVAILABLE";
+    public final static String ACTION_SENSOR_VALUE_AVAILABLE =
+            "fr.centralesupelec.students.clientble.ACTION_SENSOR_VALUE_AVAILABLE";
+    public final static String ACTION_WRITABLE_VALUE_AVAILABLE =
+            "fr.centralesupelec.students.clientble.ACTION_WRITABLE_VALUE_AVAILABLE";
     public final static String EXTRA_DATA =
             "fr.centralesupelec.students.clientble.EXTRA_DATA";
 
@@ -104,8 +107,33 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
+            final UUID uuid = characteristic.getUuid();
+
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                if (GattConstants.SENSOR_CHARACTERISTIC_UUID.equals(uuid)) {
+                    broadcastUpdate(ACTION_SENSOR_VALUE_AVAILABLE, characteristic);
+                } else if (GattConstants.WRITABLE_CHARACTERISTIC_UUID.equals(uuid)) {
+                    broadcastUpdate(ACTION_WRITABLE_VALUE_AVAILABLE, characteristic);
+                } else {
+                    Log.w(TAG, "UUID non reconnue.");
+                }
+            }
+        }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt,
+                                          BluetoothGattCharacteristic characteristic,
+                                          int status) {
+            final UUID uuid = characteristic.getUuid();
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d(TAG, "Réusssite de l’écriture de la caractéristique.");
+                if (GattConstants.SENSOR_CHARACTERISTIC_UUID.equals(uuid)) {
+                    broadcastUpdate(ACTION_SENSOR_VALUE_AVAILABLE, characteristic);
+                } else if (GattConstants.WRITABLE_CHARACTERISTIC_UUID.equals(uuid)) {
+                    broadcastUpdate(ACTION_WRITABLE_VALUE_AVAILABLE, characteristic);
+                }
+            } else {
+                Log.w(TAG, "Échec de l’écriture de la caractéristique.");
             }
         }
 
@@ -113,7 +141,14 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             Log.d(TAG, "onCharacteristicChanged() appelé.");
-            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            final UUID uuid = characteristic.getUuid();
+            if (GattConstants.SENSOR_CHARACTERISTIC_UUID.equals(uuid)) {
+                broadcastUpdate(ACTION_SENSOR_VALUE_AVAILABLE, characteristic);
+            } else if (GattConstants.WRITABLE_CHARACTERISTIC_UUID.equals(uuid)) {
+                broadcastUpdate(ACTION_WRITABLE_VALUE_AVAILABLE, characteristic);
+            } else {
+                Log.w(TAG, "UUID non reconnue");
+            }
         }
     };
 
@@ -277,6 +312,15 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.readCharacteristic(characteristic);
+    }
+
+    public void writeCharacterisitic(BluetoothGattCharacteristic characteristic, byte[] data) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+        characteristic.setValue(data);
+        mBluetoothGatt.writeCharacteristic(characteristic);
     }
 
     /**

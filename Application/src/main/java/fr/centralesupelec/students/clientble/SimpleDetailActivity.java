@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 public class SimpleDetailActivity extends Activity {
@@ -24,6 +25,7 @@ public class SimpleDetailActivity extends Activity {
     private TextView mDeviceAddressView;
     private TextView mConnectionStateView;
     private TextView mSensorValueView;
+    private TextView mWritableValueView;
 
     private String mDeviceName;
     private String mDeviceAddress;
@@ -32,6 +34,7 @@ public class SimpleDetailActivity extends Activity {
     private BluetoothLeService mBluetoothLeService;
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mSensorValueCharac;
+    private BluetoothGattCharacteristic mWritableValueCharac;
 
 
     // Code to manage Service lifecycle.
@@ -58,7 +61,7 @@ public class SimpleDetailActivity extends Activity {
     // ACTION_GATT_CONNECTED: connected to a GATT server.
     // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
     // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
-    // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+    // ACTION_SENSOR_VALUE_AVAILABLE: received data from the device.  This can be a result of read
     //                        or notification operations.
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -76,18 +79,26 @@ public class SimpleDetailActivity extends Activity {
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 Log.d(TAG, "ACTION_GATT_SERVICES_DISCOVERED reçu.");
-                displayValues();
-            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                Log.d(TAG, "ACTION_DATA_AVAILABLE reçu.");
+                requestValues();
+            } else if (BluetoothLeService.ACTION_SENSOR_VALUE_AVAILABLE.equals(action)) {
+                Log.d(TAG, "ACTION_SENSOR_VALUE_AVAILABLE reçu.");
                 final String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 Log.d(TAG, data);
-                displayData(data);
+                displaySensorValue(data);
+            } else if (BluetoothLeService.ACTION_WRITABLE_VALUE_AVAILABLE.equals(action)) {
+                Log.d(TAG, "ACTION_WRITABLE_VALUE_AVAILABLE reçu.");
+                final String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
+                Log.d(TAG, data);
+                displayWritableValue(data);
+            } else {
+                Log.w(TAG, "Action non reconnue.");
             }
         }
     };
 
     private void clearUI() {
         mSensorValueView.setText(R.string.no_data);
+        mWritableValueView.setText(R.string.no_data);
     }
 
     @Override
@@ -96,16 +107,15 @@ public class SimpleDetailActivity extends Activity {
         setContentView(R.layout.simple_detail_layout);
 
         final Intent intent = getIntent();
-
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
-
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+
         mDeviceAddressView = (TextView) findViewById(R.id.device_address);
         mDeviceAddressView.setText(mDeviceAddress);
 
         mConnectionStateView = (TextView) findViewById(R.id.connection_state);
-
         mSensorValueView = (TextView) findViewById(R.id.sensor_value);
+        mWritableValueView = (TextView) findViewById(R.id.writable_value);
 
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -182,13 +192,39 @@ public class SimpleDetailActivity extends Activity {
         });
     }
 
-    private void displayData(String data) {
+    private void displaySensorValue(String data) {
         if (data != null) {
             mSensorValueView.setText(data);
         }
     }
 
-    private void displayValues() {
+    private void displayWritableValue(String data) {
+        if (data != null) {
+            mWritableValueView.setText(data);
+        }
+    }
+
+    public void onRefreshClick(View view) {
+        Log.d(TAG, "onRefreshClick()");
+        requestWritableValue();
+    }
+
+    private void requestWritableValue() {
+        BluetoothGattService privateService = mBluetoothLeService.getPrivateService();
+        if (privateService == null) {
+            Log.w(TAG, "Service Gatt privé non détecté.");
+            return;
+        }
+        mWritableValueCharac =
+                privateService.getCharacteristic(GattConstants.WRITABLE_CHARACTERISTIC_UUID);
+        if (mWritableValueCharac != null) {
+            mBluetoothLeService.readCharacteristic(mWritableValueCharac);
+        } else {
+            Log.w(TAG, "WRITABLE_CHARACTERISTIC_UUID non trouvé.");
+        }
+    }
+
+    private void requestAndSubsribeSensorValue() {
         BluetoothGattService privateService = mBluetoothLeService.getPrivateService();
         if (privateService == null) {
             Log.w(TAG, "Service Gatt privé non détecté.");
@@ -196,12 +232,23 @@ public class SimpleDetailActivity extends Activity {
         }
         mSensorValueCharac =
                 privateService.getCharacteristic(GattConstants.SENSOR_CHARACTERISTIC_UUID);
-        final int charaProp = mSensorValueCharac.getProperties();
-        mBluetoothLeService.readCharacteristic(mSensorValueCharac);
-        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-            Log.d(TAG, "Demande de notification.");
-            mBluetoothLeService.setCharacteristicNotification(mSensorValueCharac, true);
+        if (mSensorValueCharac != null) {
+            mBluetoothLeService.readCharacteristic(mSensorValueCharac);
+            final int charaProp = mSensorValueCharac.getProperties();
+            mBluetoothLeService.readCharacteristic(mSensorValueCharac);
+            if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                Log.d(TAG, "Demande de notification.");
+                mBluetoothLeService.setCharacteristicNotification(mSensorValueCharac, true);
+            }
+        } else {
+            Log.w(TAG, "SENSOR_CHARACTERISTIC_UUID non trouvé");
         }
+
+    }
+
+    private void requestValues() {
+        requestWritableValue();
+        requestAndSubsribeSensorValue();
     }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
@@ -209,7 +256,8 @@ public class SimpleDetailActivity extends Activity {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
-        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_SENSOR_VALUE_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_WRITABLE_VALUE_AVAILABLE);
         return intentFilter;
     }
 }
