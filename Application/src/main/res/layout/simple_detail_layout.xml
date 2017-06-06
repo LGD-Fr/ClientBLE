@@ -78,5 +78,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onRefreshClick"
-        android:text="@string/label_refresh" />
+        android:text="@string/label_read" />
+
+    <EditText
+        android:id="@+id/form_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/hint_writable_value"
+        android:inputType="text"
+        android:maxLength="20" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onSendClick"
+        android:text="@string/label_write" />
 </LinearLayout>

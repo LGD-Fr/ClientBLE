@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ public class SimpleDetailActivity extends Activity {
     private TextView mConnectionStateView;
     private TextView mSensorValueView;
     private TextView mWritableValueView;
+    private TextView mFormView;
 
     private String mDeviceName;
     private String mDeviceAddress;
@@ -113,6 +115,7 @@ public class SimpleDetailActivity extends Activity {
         mDeviceAddressView = (TextView) findViewById(R.id.device_address);
         mDeviceAddressView.setText(mDeviceAddress);
 
+        mFormView = (TextView) findViewById(R.id.form_view);
         mConnectionStateView = (TextView) findViewById(R.id.connection_state);
         mSensorValueView = (TextView) findViewById(R.id.sensor_value);
         mWritableValueView = (TextView) findViewById(R.id.writable_value);
@@ -207,6 +210,18 @@ public class SimpleDetailActivity extends Activity {
     public void onRefreshClick(View view) {
         Log.d(TAG, "onRefreshClick()");
         requestWritableValue();
+    }
+
+    public void onSendClick(View view) {
+        Log.d(TAG, "onSendClick()");
+        byte [] text = mFormView.getText().toString().getBytes();
+        byte [] data = new byte[20];
+        int max = Math.min(text.length, GattConstants.WRITABLE_CHARACTERISTIC_MAX_LENGTH);
+        for (int i = 0; i < max; i++) {
+            data[i] = text[i];
+        }
+        Log.d(TAG, "envoi de: " + data.toString());
+        mBluetoothLeService.writeCharacterisitic(mWritableValueCharac, data);
     }
 
     private void requestWritableValue() {

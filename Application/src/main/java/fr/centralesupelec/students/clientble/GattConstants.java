@@ -45,6 +45,7 @@ public class GattConstants {
             "c093685d-005f-4d3c-8240-6d3020a2c608";
     public static final UUID WRITABLE_CHARACTERISTIC_UUID =
             UUID.fromString(WRITABLE_CHARACTERISTIC_UUID_STRING);
+    public static final int WRITABLE_CHARACTERISTIC_MAX_LENGTH = 20;
 
     // UUID du descripteur qui donne la configuration client d’une caractérisitique
     // (notification ou non.)
