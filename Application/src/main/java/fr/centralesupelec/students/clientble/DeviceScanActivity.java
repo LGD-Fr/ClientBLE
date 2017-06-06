@@ -26,8 +26,10 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -54,6 +56,7 @@ public class DeviceScanActivity extends ListActivity {
 
     private static final int REQUEST_ENABLE_COARSE_LOCATION = 2;
     private static final int REQUEST_ENABLE_BT = 1;
+
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
 
@@ -145,13 +148,32 @@ public class DeviceScanActivity extends ListActivity {
     protected void onResume() {
         super.onResume();
 
+        // Vérifie si le service de localisation est actif sur l’appareil
+        boolean location_enabled;
+        try {
+            location_enabled = Settings.Secure.LOCATION_MODE_OFF !=
+                    Settings.Secure.getInt(
+                            getContentResolver(),
+                            Settings.Secure.LOCATION_MODE
+                    );
+        } catch (Exception e) {
+            e.printStackTrace();
+            location_enabled = false;
+        }
+
+        // Si le service de localisation n’est pas activé,
+        // demande de l’activer dans les paramètres du système.
+        if (!location_enabled) {
+            Toast.makeText(this, "Prière d’activer une source de localisation.", Toast.LENGTH_LONG).show();
+            Intent enableLocationIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(enableLocationIntent);
+        }
+
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
         if (!mBluetoothAdapter.isEnabled()) {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
         // Initializes list view adapter.
@@ -181,24 +203,12 @@ public class DeviceScanActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
         if (device == null) return;
-        if (false) {
-            final Intent intent = new Intent(this, DeviceControlActivity.class);
-            intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-            intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-            if (mScanning) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                mScanning = false;
-            }
-            startActivity(intent);
-        } else {
-            final Intent intent = new Intent(this, SimpleDetailActivity.class);
-            intent.putExtra(SimpleDetailActivity.EXTRAS_DEVICE_NAME, device.getName());
-            intent.putExtra(SimpleDetailActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-            if (mScanning) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                mScanning = false;
-            }
-            startActivity(intent);
+        final Intent intent = new Intent(this, SimpleDetailActivity.class);
+        intent.putExtra(SimpleDetailActivity.EXTRAS_DEVICE_NAME, device.getName());
+        intent.putExtra(SimpleDetailActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+        if (mScanning) {
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            mScanning = false;
         }
     }
 
