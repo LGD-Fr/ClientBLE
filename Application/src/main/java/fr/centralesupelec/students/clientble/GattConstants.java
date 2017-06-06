@@ -23,14 +23,17 @@ import java.util.UUID;
 /**
  * This class includes a small subset of standard GATT attributes for demonstration purposes.
  */
-public class SampleGattAttributes {
+public class GattConstants {
     private static HashMap<String, String> attributes = new HashMap();
+
+    // UUID de notre service privé
+    // Version 4 (random) UUID — https://www.uuidgenerator.net/
     public static final String PRIVATE_SERVICE_UUID_STRING =
-            "11223344-5566-7788-9900-aabbccddeeff";
+            "622df401-85ed-4666-a4fe-9efaa3ab47aa";
     public static final UUID PRIVATE_SERVICE_UUID =
             UUID.fromString(PRIVATE_SERVICE_UUID_STRING);
     public static final String SENSOR_CHARACTERISTIC_UUID_STRING =
-            "01020304-0506-0708-0900-0a0b0c0d0e0f";
+            "7817a8eb-f6cb-4be3-8143-52086719754d";
     public static final UUID SENSOR_CHARACTERISTIC_UUID =
             UUID.fromString(SENSOR_CHARACTERISTIC_UUID_STRING);
     public static final String CHARACTERISTIC_CONFIG_UUID_STRING =
@@ -38,6 +41,7 @@ public class SampleGattAttributes {
     public static final UUID CHARACTERISTIC_CONFIG_UUID =
             UUID.fromString(CHARACTERISTIC_CONFIG_UUID_STRING);
 
+    // UUID de services connus — utilisés dans DeviceControleActivity
     static {
         // Sample Services.
         attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information");
@@ -55,7 +59,7 @@ public class SampleGattAttributes {
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name");
 
         attributes.put(SENSOR_CHARACTERISTIC_UUID_STRING, "Sensor value");
-        attributes.put("ff020304-0506-0708-0900-0a0b0c0d0e0f", "3-byte rw notif. char.");
+        attributes.put("c093685d-005f-4d3c-8240-6d3020a2c608", "3-byte rw notif. char.");
     }
 
     public static String lookup(String uuid, String defaultName) {

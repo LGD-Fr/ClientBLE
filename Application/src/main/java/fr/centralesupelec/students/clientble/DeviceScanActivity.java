@@ -26,7 +26,6 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -210,10 +209,11 @@ public class DeviceScanActivity extends ListActivity {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             mScanning = false;
         }
+        startActivity(intent);
     }
 
     private void scanLeDevice(final boolean enable) {
-        UUID [] uuids = {SampleGattAttributes.PRIVATE_SERVICE_UUID};
+        UUID [] uuids = {GattConstants.PRIVATE_SERVICE_UUID};
         if (enable) {
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable() {

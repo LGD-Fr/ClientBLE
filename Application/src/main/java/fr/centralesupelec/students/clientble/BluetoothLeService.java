@@ -36,9 +36,6 @@ import android.util.Log;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.UUID;
 
 import static java.lang.Thread.sleep;
 
@@ -132,7 +129,7 @@ public class BluetoothLeService extends Service {
         Log.d(TAG, "broadcastUpdate(String, BluetoothGattChar.) appelé.");
         final byte[] data = characteristic.getValue();
         if (data != null && data.length > 0) {
-            if (SampleGattAttributes.SENSOR_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
+            if (GattConstants.SENSOR_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
                 final long value =
                         (data.length == 2) ? (data[0] << 8) & 0x0000ff00 | (data[1] << 0) & 0x000000ff
                                           : (data[0] << 0) & 0x000000ff;
@@ -295,8 +292,8 @@ public class BluetoothLeService extends Service {
             return;
         }
         Log.d(TAG, "setChar.Notification() appelé");
-        if (SampleGattAttributes.SENSOR_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
-            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(SampleGattAttributes.CHARACTERISTIC_CONFIG_UUID);
+        if (GattConstants.SENSOR_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
+            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(GattConstants.CHARACTERISTIC_CONFIG_UUID);
             descriptor.setValue(
                     enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                             : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
@@ -324,6 +321,6 @@ public class BluetoothLeService extends Service {
 
     public BluetoothGattService getPrivateService() {
         if (mBluetoothGatt == null) return null;
-        return mBluetoothGatt.getService(SampleGattAttributes.PRIVATE_SERVICE_UUID);
+        return mBluetoothGatt.getService(GattConstants.PRIVATE_SERVICE_UUID);
     }
 }
