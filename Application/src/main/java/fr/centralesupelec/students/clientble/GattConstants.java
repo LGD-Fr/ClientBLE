@@ -32,23 +32,34 @@ public class GattConstants {
             "622df401-85ed-4666-a4fe-9efaa3ab47aa";
     public static final UUID PRIVATE_SERVICE_UUID =
             UUID.fromString(PRIVATE_SERVICE_UUID_STRING);
+
+    // UUID (v4, cf. supra) de notre caractéristique privée lisible et notifiable, de deux octets.
     public static final String SENSOR_CHARACTERISTIC_UUID_STRING =
             "7817a8eb-f6cb-4be3-8143-52086719754d";
     public static final UUID SENSOR_CHARACTERISTIC_UUID =
             UUID.fromString(SENSOR_CHARACTERISTIC_UUID_STRING);
+
+    // UUID (v4, cf. supra) de notre caractéristiuqe privée, lisible, éditable et notifiable,
+    // de trois octets.
+    public static final String WRITABLE_CHARACTERISTIC_UUID_STRING =
+            "c093685d-005f-4d3c-8240-6d3020a2c608";
+    public static final UUID WRITABLE_CHARACTERISTIC_UUID =
+            UUID.fromString(WRITABLE_CHARACTERISTIC_UUID_STRING);
+
+    // UUID du descripteur qui donne la configuration client d’une caractérisitique
+    // (notification ou non.)
     public static final String CHARACTERISTIC_CONFIG_UUID_STRING =
             "00002902-0000-1000-8000-00805f9b34fb";
     public static final UUID CHARACTERISTIC_CONFIG_UUID =
             UUID.fromString(CHARACTERISTIC_CONFIG_UUID_STRING);
 
-    // UUID de services connus — utilisés dans DeviceControleActivity
+    // UUID de services connus — utilisés dans DeviceControlActivity
     static {
         // Sample Services.
         attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information");
         attributes.put("00001801-0000-1000-8000-00805f9b34fb", "Generic Attribute");
         attributes.put("00001800-0000-1000-8000-00805f9b34fb", "Generic Access");
         attributes.put("0000180f-0000-1000-8000-00805f9b34fb", "Battery Service");
-
         attributes.put(PRIVATE_SERVICE_UUID_STRING, "Private Service");
 
         // Sample Characteristics.
@@ -57,11 +68,11 @@ public class GattConstants {
         attributes.put("00002a01-0000-1000-8000-00805f9b34fb", "Appearance");
         attributes.put("00002a04-0000-1000-8000-00805f9b34fb", "Peripheral Preferred Connection Parameters");
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name");
-
         attributes.put(SENSOR_CHARACTERISTIC_UUID_STRING, "Sensor value");
-        attributes.put("c093685d-005f-4d3c-8240-6d3020a2c608", "3-byte rw notif. char.");
+        attributes.put(WRITABLE_CHARACTERISTIC_UUID_STRING, "3-byte rw notif. char.");
     }
 
+    // recherche du nom de services connus — utilisé dans DeviceControlActivity
     public static String lookup(String uuid, String defaultName) {
         String name = attributes.get(uuid);
         return name == null ? defaultName : name;
