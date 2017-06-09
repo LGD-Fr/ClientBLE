@@ -45,20 +45,33 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * Activity for scanning and displaying available Bluetooth LE devices.
+ * Activité qui scanne et affiche les appareils Bluetooth Low Energy
+ * offrant un service BLE particulier.
+ *
+ * Le scan ne cherche que les appareils qui proposent notre service privé
+ * de visualisation de la valeur du potentiomètre de la carte Curiosity
+ * et d’écriture d’une valeur.
  */
 public class DeviceScanActivity extends ListActivity {
-    private LeDeviceListAdapter mLeDeviceListAdapter;
-    private BluetoothAdapter mBluetoothAdapter;
-    private boolean mScanning;
-    private Handler mHandler;
 
+    /* Attributs. */
+    private LeDeviceListAdapter mLeDeviceListAdapter; // adapte la liste des appareils scanné pour les afficher sur l’interface
+    private BluetoothAdapter mBluetoothAdapter; // représente l’interface BLE, permet le scan
+    private boolean mScanning; // si l’activité est en train de scanner
+    private Handler mHandler; // gestionnaire de tâches
+
+    /* Constantes : valeurs de retour pour onActivityResult */
     private static final int REQUEST_ENABLE_COARSE_LOCATION = 2;
     private static final int REQUEST_ENABLE_BT = 1;
 
-    // Stops scanning after 10 seconds.
+    /* Constante : durée maximale du scan. */
     private static final long SCAN_PERIOD = 10000;
 
+    /**
+     * Méthode appelé lors de la création de l’activité, ou lors d’un changement
+     * de l’orientation de l’écran (portrait/paysage.)
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +98,7 @@ public class DeviceScanActivity extends ListActivity {
             return;
         }
 
-        // demande des permissions au cas où
+        // Demande de la permission d’accès à la localisation, pour permettre le scan BLE.
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -113,14 +126,24 @@ public class DeviceScanActivity extends ListActivity {
         }
     }
 
+    /**
+     * Méthode de construction du menu (les boutons) de la barre supérieure.
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Affiche les boutons définis dans res/menu/main.xml
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Sans scan en cours, n’affiche que le bouton "scan"
         if (!mScanning) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_scan).setVisible(true);
             menu.findItem(R.id.menu_refresh).setActionView(null);
         } else {
+            // Si un scan est en cours, affiche un bouton de progression et
+            // le bouton "stop", mais pas le bouton "scan".
             menu.findItem(R.id.menu_stop).setVisible(true);
             menu.findItem(R.id.menu_scan).setVisible(false);
             menu.findItem(R.id.menu_refresh).setActionView(
@@ -129,25 +152,36 @@ public class DeviceScanActivity extends ListActivity {
         return true;
     }
 
+    /**
+     * Méthode appelée lors de la pression sur un bouton de
+     * la barre supérieure.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // apppui sur "scan"
             case R.id.menu_scan:
-                mLeDeviceListAdapter.clear();
-                scanLeDevice(true);
+                mLeDeviceListAdapter.clear(); // vider la liste des appareils affichés
+                scanLeDevice(true); // démarrage du scan
                 break;
+            // appui sur "stop"
             case R.id.menu_stop:
-                scanLeDevice(false);
+                scanLeDevice(false); // arrêt du scan
                 break;
         }
         return true;
     }
 
+    /**
+     * Appelée après onCreate() ou lors du retour de l’activité au premier plan.
+     */
     @Override
     protected void onResume() {
         super.onResume();
 
-        // Vérifie si le service de localisation est actif sur l’appareil
+        // Vérifie si le service de localisation est actif sur l’appareil.
         boolean location_enabled;
         try {
             location_enabled = Settings.Secure.LOCATION_MODE_OFF !=
@@ -181,16 +215,27 @@ public class DeviceScanActivity extends ListActivity {
         scanLeDevice(true);
     }
 
+    /**
+     * Méthode appelé lors du retour depuis une activité lancée avec startActivityForResult.
+     * Traitement de la valeur reçue (résultat) envoyée par cette activité.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // User chose not to enable Bluetooth.
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
+            // Application inutile sans BLE => arrêt.
             finish();
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Méthode appelée lors du passage de l’activité à l’arrière-plan.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -198,10 +243,23 @@ public class DeviceScanActivity extends ListActivity {
         mLeDeviceListAdapter.clear();
     }
 
+    /**
+     * Méthode appelée lorsque l’utilisateur clique sur un élément de la liste des appareils
+     * détectés par le scan.
+     * @param l
+     * @param v
+     * @param position
+     * @param id
+     */
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
+        // Récupération de l’objet représentant l’appareil BLE.
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
+
         if (device == null) return;
+
+        // Lancement de l’activité "SimpleDetailActivity" pour se connecter à l’appareil
+        // et utiliser ses services BLE.
         final Intent intent = new Intent(this, SimpleDetailActivity.class);
         intent.putExtra(SimpleDetailActivity.EXTRAS_DEVICE_NAME, device.getName());
         intent.putExtra(SimpleDetailActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
@@ -212,8 +270,16 @@ public class DeviceScanActivity extends ListActivity {
         startActivity(intent);
     }
 
+    /**
+     * Méthode qui lance ou arrête le scan des appareils BLE à notre portée qui proposent notre service
+     * privé.
+     * @param enable
+     */
     private void scanLeDevice(final boolean enable) {
+        // Liste (de taille 1) qui contient l’UUID de notre service privé.
         UUID [] uuids = {GattConstants.PRIVATE_SERVICE_UUID};
+
+        // Démarrage du scan.
         if (enable) {
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable() {
@@ -228,6 +294,7 @@ public class DeviceScanActivity extends ListActivity {
             mScanning = true;
             mBluetoothAdapter.startLeScan(uuids, mLeScanCallback);
         } else {
+            // Arrêt du scan.
             mScanning = false;
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
@@ -235,6 +302,8 @@ public class DeviceScanActivity extends ListActivity {
     }
 
     // Adapter for holding devices found through scanning.
+    // Contient les appareils détectés lors du scan et permet de les afficher sur
+    // l’interface.
     private class LeDeviceListAdapter extends BaseAdapter {
         private ArrayList<BluetoothDevice> mLeDevices;
         private LayoutInflater mInflator;
@@ -300,7 +369,10 @@ public class DeviceScanActivity extends ListActivity {
         }
     }
 
-    // Device scan callback.
+    /**
+     * Classe définissant la fonction appelée lorsqu’un nouvel appareil est détecté
+     * lors d’un scan BLE.
+     */
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
 
@@ -316,6 +388,9 @@ public class DeviceScanActivity extends ListActivity {
         }
     };
 
+    /**
+     * Classe définissant les données à afficher sur chaque élément de la liste de l’interface.
+     */
     static class ViewHolder {
         TextView deviceName;
         TextView deviceAddress;
