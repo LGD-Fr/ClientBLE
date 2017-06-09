@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 /**
- * This class includes a small subset of standard GATT attributes for demonstration purposes.
+ * Stockage des UUID des services et caractéristiques BLE interrogées.
  */
 public class GattConstants {
     private static HashMap<String, String> attributes = new HashMap();
@@ -40,7 +40,7 @@ public class GattConstants {
             UUID.fromString(SENSOR_CHARACTERISTIC_UUID_STRING);
 
     // UUID (v4, cf. supra) de notre caractéristiuqe privée, lisible, éditable et notifiable,
-    // de trois octets.
+    // de vingt octets.
     public static final String WRITABLE_CHARACTERISTIC_UUID_STRING =
             "c093685d-005f-4d3c-8240-6d3020a2c608";
     public static final UUID WRITABLE_CHARACTERISTIC_UUID =
@@ -54,7 +54,7 @@ public class GattConstants {
     public static final UUID CHARACTERISTIC_CONFIG_UUID =
             UUID.fromString(CHARACTERISTIC_CONFIG_UUID_STRING);
 
-    // UUID de services connus — utilisés dans DeviceControlActivity
+    // UUID de services connus — utilisés dans DeviceControlActivity uniquement
     static {
         // Sample Services.
         attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information");
@@ -73,7 +73,7 @@ public class GattConstants {
         attributes.put(WRITABLE_CHARACTERISTIC_UUID_STRING, "3-byte rw notif. char.");
     }
 
-    // recherche du nom de services connus — utilisé dans DeviceControlActivity
+    // recherche du nom de services connus — utilisé dans DeviceControlActivity uniquement
     public static String lookup(String uuid, String defaultName) {
         String name = attributes.get(uuid);
         return name == null ? defaultName : name;

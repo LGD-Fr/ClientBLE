@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * Activité proposée dans l’application de démonstration, non utilisée dans notre application.
+ *
  * For a given BLE device, this Activity provides the user interface to connect, display data,
  * and display GATT services and characteristics supported by the device.  The Activity
  * communicates with {@code BluetoothLeService}, which in turn interacts with the
