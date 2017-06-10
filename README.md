@@ -1,21 +1,17 @@
 
-Android BluetoothLeGatt Sample - Modified
-=========================================
+Client BLE
+==========
 
 **Code from [https://github.com/googlesamples/android-BluetoothLeGatt](https://github.com/googlesamples/android-BluetoothLeGatt)
-modified by Louis-Guillaume Dubois.**
-
-This sample demonstrates how to use the Bluetooth LE Generic Attribute Profile (GATT)
-to transmit arbitrary data between devices.
+modified by Mrs Mitermite and Mr Dubois, working for CentraleSupélec.**
 
 Introduction
 ------------
 
-This sample shows a list of available Bluetooth LE devices and provides
-an interface to connect, display data and display GATT services and
-characteristics supported by the devices.
+This software shows a list of available Bluetooth LE devices which run our private GATT service (see our main report)
+and provides an interface to connect, display and write the characteristics of this private GATT service.
 
-It creates a [Service][1] for managing connection and data communication with a GATT server
+It creates a [Service][1] for managing connection and data communication with the GATT server
 hosted on a given Bluetooth LE device.
 
 The Activities communicate with the Service, which in turn interacts with the [Bluetooth LE API][2].
@@ -33,12 +29,12 @@ Pre-requisites
 Screenshots
 -------------
 
-<img src="screenshots/1-main.png" height="400" alt="Screenshot"/> <img src="screenshots/2-detail.png" height="400" alt="Screenshot"/> 
+<img src="screenshots/devicescan.png" height="400" alt="Screenshot"/> <img src="screenshots/simpledetail.png" height="400" alt="Screenshot"/> 
 
 Getting Started
 ---------------
 
-This sample uses the Gradle build system. To build this project, use the
+This app uses the Gradle build system. To build this project, use the
 "gradlew build" command or use "Import Project" in Android Studio.
 
 License
@@ -46,7 +42,7 @@ License
 
 Copyright 2016 The Android Open Source Project, Inc.
 
-Copyright 2017 Louis-Guillaume Dubois
+Copyright 2017 CentraleSupélec
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor
 license agreements.  See the NOTICE file distributed with this work for
