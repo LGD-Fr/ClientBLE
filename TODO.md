@@ -3,22 +3,14 @@
 
 Par ordre décroissant d’urgence :
 
-- documentation du code Android ;
-- ...
 - bouton « presse-papier »
 - bouton « partager » avec date, description etc.
 - historique ou graphe des mesures.
 
-Soutenance
-----------
-
-- diapositives + présentation : 20'
-- démo
-
-
 Fait
 ----
 
+- documentation du code Android ;
 - prise en charge de l’écriture d’une caractéristique ;
 - vérification de l’activation de la localisation ;
 - affichage de la date de la dernière mesure ;
