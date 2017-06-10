@@ -1,4 +1,3 @@
-
 Client BLE
 ==========
 
@@ -16,7 +15,7 @@ hosted on a given Bluetooth LE device.
 
 The Activities communicate with the Service, which in turn interacts with the [Bluetooth LE API][2].
 
-<img src="img/schema.png" height="1200" alt="schema"/>
+<img src="img/schema.png" height="600" alt="schema"/>
 
 [1]:http://developer.android.com/reference/android/app/Service.html
 [2]:https://developer.android.com/reference/android/bluetooth/BluetoothGatt.html
