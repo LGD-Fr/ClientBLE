@@ -3,7 +3,7 @@ Client BLE
 ==========
 
 **Code from [https://github.com/googlesamples/android-BluetoothLeGatt](https://github.com/googlesamples/android-BluetoothLeGatt)
-modified by Mrs Mitermite and Mr Dubois, working for CentraleSupélec.**
+modified by Lucile Mitermite and Louis-Guillaume Dubois, working for CentraleSupélec.**
 
 Introduction
 ------------
