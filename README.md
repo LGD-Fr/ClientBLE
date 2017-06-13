@@ -4,7 +4,7 @@
 **Code from [https://github.com/googlesamples/android-BluetoothLeGatt](https://github.com/googlesamples/android-BluetoothLeGatt)
 modified by Lucile Mitermite and Louis-Guillaume Dubois, working for CentraleSupélec.**
 
-**[<img src="screenshots/icon-web.png" height="30" alt="icon"/>Download APK](https://framadrop.org/r/8Qf1W14sCb#ugzTMOnzy/TcS3n8txDx6qBav8FBw7vWSBvQYbvfo2U=)**
+**[<img src="screenshots/icon-web.png" height="30" alt="icon"/>Download APK](https://framadrop.org/r/KrqBNGm171#HsD5HoBn47/uLTukC1bZ+9/bbMe0BgJpG1NttgceKIM=)**
 
 Introduction
 ------------
